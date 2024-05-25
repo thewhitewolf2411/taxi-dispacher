@@ -21,7 +21,7 @@ function noop(): void {
   // do nothing
 }
 
-export interface Customer {
+export interface Driver {
   id: string;
   avatar: string;
   name: string;
@@ -30,18 +30,18 @@ export interface Customer {
   createdAt: Date;
 }
 
-interface CustomersTableProps {
+interface DriverTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Driver[];
   rowsPerPage?: number;
 }
 
-export function CustomersTable({
+export function DriverTable({
   rows = [],
-}: CustomersTableProps): React.JSX.Element {
+}: DriverTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    return rows.map((driver) => driver.id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);

@@ -4,12 +4,12 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { config } from '@/config';
-import { CustomersTable } from '@/components/dashboard/customer/customers-table';
-import type { Customer } from '@/components/dashboard/customer/customers-table';
+import { DriverTable } from '@/components/dashboard/driver/driver-table';
+import type { Driver } from '@/components/dashboard/driver/driver-table';
 
 export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
 
-const customers = [] satisfies Customer[];
+const drivers = [] satisfies Driver[];
 
 export default function Page(): React.JSX.Element {
   return (
@@ -19,13 +19,9 @@ export default function Page(): React.JSX.Element {
           <Typography variant="h4">Customers</Typography>
         </Stack>
       </Stack>
-      <CustomersTable
-        rows={customers}
+      <DriverTable
+        rows={drivers}
       />
     </Stack>
   );
-}
-
-function applyPagination(rows: Customer[], page: number, rowsPerPage: number): Customer[] {
-  return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 }
