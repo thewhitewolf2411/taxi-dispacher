@@ -26,6 +26,7 @@
     "@hookform/resolvers": "3.3.4",
     "@mui/lab": "5.0.0-alpha.167",
     "@mui/material": "5.15.12",
+    "@mui/styles": "^5.15.19",
     "@mui/system": "5.15.12",
     "@mui/utils": "5.15.12",
     "@mui/x-date-pickers": "6.19.6",

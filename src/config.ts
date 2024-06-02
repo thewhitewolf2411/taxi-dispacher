@@ -10,5 +10,5 @@ export interface Config {
 export const config: Config = {
   site: { name: 'Devias Kit', description: '', themeColor: '#090a0b', url: getSiteURL() },
   logLevel: (process.env.NEXT_PUBLIC_LOG_LEVEL as keyof typeof LogLevel) ?? LogLevel.ALL,
-  baseUrl: "http://192.168.0.5:5000"
+  baseUrl: "http://192.168.0.3:5000"
 };

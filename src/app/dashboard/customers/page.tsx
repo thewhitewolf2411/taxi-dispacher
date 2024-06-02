@@ -19,9 +19,7 @@ export default function Page(): React.JSX.Element {
           <Typography variant="h4">Customers</Typography>
         </Stack>
       </Stack>
-      <CustomersTable
-        rows={customers}
-      />
+      <CustomersTable/>
     </Stack>
   );
 }

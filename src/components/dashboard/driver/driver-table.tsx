@@ -1,101 +1,98 @@
 'use client';
 
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import api from '@/lib/api';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
-
-import { useSelection } from '@/hooks/use-selection';
-
-function noop(): void {
-  // do nothing
-}
+import { DriverModal } from './driver-modal';
+import { Button } from '@mui/material';
 
 export interface Driver {
   id: string;
   avatar: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
   createdAt: Date;
 }
 
-interface DriverTableProps {
-  count?: number;
-  page?: number;
-  rows?: Driver[];
-  rowsPerPage?: number;
-}
+export function DriverTable(): React.JSX.Element {
 
-export function DriverTable({
-  rows = [],
-}: DriverTableProps): React.JSX.Element {
-  const rowIds = React.useMemo(() => {
-    return rows.map((driver) => driver.id);
-  }, [rows]);
+  const [drivers, setDrivers] = React.useState<Driver[]>([])
+  const [modalIsOpen, setModalIsOpen] = React.useState<boolean>(false)
+  const token = localStorage.getItem('custom-auth-token');
 
-  const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
+  const getName = (firstName: string, lastName: string) => {
+    if(firstName && lastName) {
+      return firstName + " " + lastName
+    }
+    return ""
+  }
 
-  const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
-  const selectedAll = rows.length > 0 && selected?.size === rows.length;
+  const getDrivers = async () => {
+    if (modalIsOpen) return 
+    try {
+      const headers = {
+        'authorization': token
+      }
+      const { data } = await api.get("/api/admin/drivers", {
+        headers: headers
+      });
+
+      if (data.drivers) {
+        setDrivers(data.drivers)
+      } else {
+        setDrivers([])
+      }
+    } catch (error) {
+      console.error("Error: ", error)
+      setDrivers([])
+    }
+  }
+
+  React.useEffect(() => {
+    getDrivers()
+  }, [modalIsOpen])
 
   return (
-    <Card>
-      <Box sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: '800px' }}>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedAll}
-                  indeterminate={selectedSome}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      selectAll();
-                    } else {
-                      deselectAll();
-                    }
-                  }}
-                />
-              </TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Signed Up</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => {
-              const isSelected = selected?.has(row.id);
-
-              return (
-                <TableRow hover key={row.id} selected={isSelected}>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.name}</Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Box>
-      <Divider />
-    </Card>
+    <>
+      <Button onClick={() => setModalIsOpen(!modalIsOpen)} > Add Driver </Button>
+      <Card>
+        <DriverModal open={modalIsOpen} onClose={() => setModalIsOpen(false)} />
+        <Box sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: '800px' }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Signed Up</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {drivers.map((driver) => {
+                return (
+                  <TableRow hover key={driver.id} >
+                    <TableCell>{getName(driver.firstName, driver.lastName)}</TableCell>
+                    <TableCell>{driver.email}</TableCell>
+                    <TableCell>{driver.phoneNumber}</TableCell>
+                    <TableCell>{dayjs(driver.createdAt).format('MMM D, YYYY')}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+        <Divider />
+      </Card>
+    </>
   );
 }
