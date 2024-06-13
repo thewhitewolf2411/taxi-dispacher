@@ -83,7 +83,7 @@ export function DriverTable(): React.JSX.Element {
                   <TableRow hover key={driver.id} >
                     <TableCell>{getName(driver.firstName, driver.lastName)}</TableCell>
                     <TableCell>{driver.email}</TableCell>
-                    <TableCell>{driver.phoneNumber}</TableCell>
+                    <TableCell><a href={`https://wa.me/+${driver.phoneNumber.replace(/\s/g, '')}`} target='_blank'>{driver.phoneNumber}</a></TableCell>
                     <TableCell>{dayjs(driver.createdAt).format('MMM D, YYYY')}</TableCell>
                   </TableRow>
                 );
